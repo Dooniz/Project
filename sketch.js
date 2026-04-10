@@ -19,9 +19,9 @@ function setup() {
 //-------------------------------------------DRAW--------------------------------------------------
 function draw() {
     background(20, 100, 200);
-    fishes.draw();
     fishes.move();
     fishes.moveToStart();
+    fishes.draw();
 }
 
 
@@ -70,6 +70,7 @@ class Fish {
     pop();
     }
 
+
     move() {
       //flytter fiskene fremad baseret på deres retning of hastighed
         this.velocity.add(this.acceleration);
@@ -77,8 +78,6 @@ class Fish {
         this.position.add(this.velocity);
         this.acceleration.mult(0);
     }
-
-  
 
     school(boids) { 
         let allignment = this.allign(boids);
@@ -92,11 +91,11 @@ class Fish {
         let totalForce = createVector();
         let count = 0;
 
-        //for hver boid i arrayet, hvis den er inden for distanceThreshold, tilføj dens hastighed til sum og øg count.
+        //for hver boid i arrayet, hvis den er inden for distanceThreshold, tilføj dens hastighed til total og øg count.
         for (let i = 0; i < boids.length; i++) {
             let d = p5.Vector.dist(this.position, boids[i].position);
             if (d > 0 && d < distanceThreshold) {
-                sum.add(boids[i].velocity);
+                totalForce.add(boids[i].velocity);
                 count++;
             }
         }
@@ -139,7 +138,7 @@ class Fishes {
 
     move() {
         for (let i = 0; i < this.fishArray.length; i++) {
-            //this.fishArray[i].school(this.fishArray);
+            this.fishArray[i].school(this.fishArray);
             this.fishArray[i].move();
         }
     }
