@@ -81,7 +81,7 @@ class Fish {
 
     school(boids) { 
         let allignment = this.allign(boids);
-        allignment.mult(1.0); //justerer styrken af allignment kraften
+        allignment.mult(0.7); //justerer styrken af allignment kraften
         this.acceleration.add(allignment);
     }
 
