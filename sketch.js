@@ -201,7 +201,6 @@ class Fish {
 //------------------------------container class for all fishes----------------------
 class Fishes {
     
-
     fishArray = [];
 
     constructor(amount) {
