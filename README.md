@@ -9,7 +9,7 @@ Arbejder på seperation.
 
 For at se programmet køre, her:
 
-https://html-preview.github.io/?url=https://github.com/Dooniz/Project/blob/ChangeToVectorBranch/index.html
+https://html-preview.github.io/?url=https://github.com/OskarDennisGit/Project/blob/ChangeToVectorBranch/index.html
 
 ## Resources
 
