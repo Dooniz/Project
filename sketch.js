@@ -5,7 +5,7 @@ function random(min, max) {
 
 let width = 1500;
 let height = 1000;
-let initialFishAmount = 50;
+let initialFishAmount = 500;
 let fishes;
 
 
@@ -94,6 +94,10 @@ class Fish {
         cohesion.mult(0.1); //justerer styrken af cohesion kraften
         this.acceleration.add(cohesion);
 
+        let seperation = this.seperate(boids);
+        seperation.mult(1.5);
+        this.acceleration.add(seperation);
+
     }
 
     //Søger efter en given target position og beregner en steering force for at bevæge sig mod den.
@@ -168,8 +172,8 @@ class Fish {
 
     //tjækker for fisk tæt på og bevæger sig væk
     seperate(boids) {
-        let desiredSeparation = 25;
-        let steer = createVector(0, 0);
+        let desiredSeparation = 5;
+        let total = createVector(0, 0);
         let count = 0;
 
         //for hver fisk tjæk distancen. Til andre
@@ -186,11 +190,25 @@ class Fish {
 
                 //jo tættere den anden fisk er, jo stærkere skal denne seperere
                 difference.div(d);
-                steer.add(difference);
+                total.add(difference);
                 count++;
             }
         }
+        
+        //hvis der er nogen boids inden for desiredSeparation, beregn den gennemsnitlige seperation og juster denne fisks hastighed for at bevæge sig væk.
+        if (count > 0) {
+            total.div(count);
+        }
 
+        let steering = createVector(0, 0);
+        //hvis total er større end 0, normaliser den og gang med maxSpeed for at få den ønskede hastighed i retning væk fra de andre fisk.
+        if (total.mag() > 0) {
+            total.normalize();
+            total.mult(this.maxSpeed);
+            steering = p5.Vector.sub(total, this.velocity);
+            steering.limit(this.maxSteeringForce);
+        }
+        return steering;
         
     }
 
@@ -207,7 +225,7 @@ class Fishes {
         for (let i = 0; i < amount; i++) {
             let xpos = random(0, width);
             let ypos = random(0, height);
-            let size = 3;
+            let size = 1;
             this.fishArray.push(new Fish(xpos, ypos, size));
         }
     }
