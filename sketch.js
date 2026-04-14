@@ -5,7 +5,7 @@ function random(min, max) {
 
 let width = 1500;
 let height = 1000;
-let initialFishAmount = 500;
+let initialFishAmount = 100;
 let fishes;
 
 
@@ -225,7 +225,7 @@ class Fishes {
         for (let i = 0; i < amount; i++) {
             let xpos = random(0, width);
             let ypos = random(0, height);
-            let size = 1;
+            let size = 3;
             this.fishArray.push(new Fish(xpos, ypos, size));
         }
     }
