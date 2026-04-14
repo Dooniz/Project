@@ -1,12 +1,8 @@
-
-function random(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
 let width = 1500;
 let height = 1000;
 let initialFishAmount = 100;
 let fishes;
+let boats;
 
 
 //-------------------------------------------SETUP--------------------------------------------------
@@ -14,6 +10,13 @@ let fishes;
 function setup() {
     createCanvas(width, height);
     fishes = new Fishes(initialFishAmount);
+
+    //laver array til fiskekuttere
+    boats = [];
+
+    //laver 2 fiskekuttere med position og fangstradius
+    boats.push(new FishingBoat(300, 300, 60));
+    boats.push(new FishingBoat(1100, 700, 60));
 }
 
 //-------------------------------------------DRAW--------------------------------------------------
@@ -21,7 +24,18 @@ function draw() {
     background(20, 100, 200);
     fishes.move();
     fishes.moveToStart();
+
+    //lader alle fiskekuttere prøve at fange fisk
+    for (let i = 0; i < boats.length; i++) {
+        boats[i].catchFish(fishes.fishArray);
+    }
+
     fishes.draw();
+
+    //tegner alle fiskekuttere
+    for (let i = 0; i < boats.length; i++) {
+        boats[i].draw();
+    }
 }
 
 
@@ -261,4 +275,54 @@ class Fishes {
         }
     }
 
+}
+
+//------------------------------Fishing boat class----------------------
+class FishingBoat {
+    constructor(x, y, catchRadius) {
+        //bådens position
+        this.x = x;
+        this.y = y;
+
+        //hvor stor bådens fangstcirkel er
+        this.catchRadius = catchRadius;
+
+        //counter for hvor mange fisk båden har fanget
+        this.caughtFish = 0;
+    }
+
+    catchFish(fishArray) {
+        //går baglæns gennem alle fisk i arrayet
+        for (let i = fishArray.length - 1; i >= 0; i--) {
+            let fish = fishArray[i];
+
+            //finder afstanden mellem båden og en fisk
+            let d = dist(this.x, this.y, fish.position.x, fish.position.y);
+
+            //hvis fisken er inde i fangstcirklen, bliver den fanget
+            if (d < this.catchRadius) {
+                fishArray.splice(i, 1);
+                this.caughtFish = this.caughtFish + 1;
+            }
+        }
+    }
+
+    draw() {
+        //tegner selve båden
+        fill(120);
+        noStroke();
+        rect(this.x - 10, this.y - 5, 20, 10);
+
+        //tegner bådens fangstområde
+        noFill();
+        stroke(255, 0, 0);
+        strokeWeight(2);
+        circle(this.x, this.y, this.catchRadius * 2);
+
+        //viser hvor mange fisk båden har fanget
+        noStroke();
+        fill(255);
+        textSize(14);
+        text(this.caughtFish, this.x + 15, this.y - 10);
+    }
 }
