@@ -26,17 +26,21 @@ function draw() {
 
 
 //----------------------------------------KlASSER--------------------------------------------
+
+
+//--------------------------------------------FISH CLASS------------------------------
 class Fish {
 
     constructor(xpos, ypos, size) {
         this.position = createVector(xpos, ypos);
         this.size = size;
         
+        //random vector velocity så de starter i forskellige retninger
         this.velocity = createVector(random(-1, 1), random(-1, 1));
         this.acceleration = createVector(0, 0);
         this.direction = this.velocity.heading();
 
-        this.maxSpeed = 4;
+        this.maxSpeed = 3;
         this.maxSteeringForce = 0.5;
 
         //creating allignment force
@@ -80,10 +84,36 @@ class Fish {
     }
 
     school(boids) { 
+        //alligment
         let allignment = this.allign(boids);
         allignment.mult(0.7); //justerer styrken af allignment kraften
         this.acceleration.add(allignment);
+
+        //cohesion
+        let cohesion = this.cohere(boids);
+        cohesion.mult(0.1); //justerer styrken af cohesion kraften
+        this.acceleration.add(cohesion);
+
     }
+
+    //Søger efter en given target position og beregner en steering force for at bevæge sig mod den.
+    seek(target) {
+
+        //vector fra position til target
+        let desired;
+        desired = p5.Vector.sub(target, this.position);
+        
+        //normaliserer desired vectoren og ganger den med maxSpeed for at få den ønskede hastighed i retning af target.
+        desired.normalize();
+        desired.mult(this.maxSpeed);
+
+        //steering force er ønsket hastighed minus den nuværende hastighed.
+        let steering;
+        steering = p5.Vector.sub(desired, this.velocity);
+        steering.limit(this.maxSteeringForce); //begrænser styrken af steering force til maxSteeringForce
+        return steering;
+    }
+
 
     //For hver fisk tæt på, berægner vi den gennemsnitlige hastighed af de andre fisk og justerer vores hastighed for at matche den gennemsnitlige hastighed.
     allign(boids) {
@@ -112,10 +142,63 @@ class Fish {
         }
     }
 
+    //for hver fisk tæt på beregner vi den gennemsnitlige position af de andre fisk
+    //  og justerer denne hastighed for at bevæge os mod den gennemsnitlige position. (midten)
+    cohere(boids) {
+        let distanceThreshold = 50;
+        let sumPosition = createVector(0,0);
+        let count = 0;
+
+        //for hver filk tjæk om den er tæt på. Hvis den er, tilføk dens position til totalen.
+        for (let i = 0; i < boids.length; i++) {
+            let d = p5.Vector.dist(this.position, boids[i].position);
+            if (d > 0 && d < distanceThreshold) {
+                sumPosition.add(boids[i].position);
+                count++;
+            }
+        }
+        //Hvis der er nogen boids inden for distanceThreshold, beregn den gennemsnitlige position og juster denne fisks
+        if (count > 0) {
+            sumPosition.div(count);
+            return this.seek(sumPosition);
+        } else { //ellers tom vector så den forbliver uændret
+            return createVector(0, 0);
+        }   
+    }
+
+    //tjækker for fisk tæt på og bevæger sig væk
+    seperate(boids) {
+        let desiredSeparation = 25;
+        let steer = createVector(0, 0);
+        let count = 0;
+
+        //for hver fisk tjæk distancen. Til andre
+        for (let i = 0; i < boids.length; i++) {
+            let d = p5.Vector.dist(this.position, boids[i].position);
+            
+            //hvis den er over nul of under desiredSeparation, 
+            //beregn en vektor væk fra den anden fisk, vægtet af hvor tæt den er.
+            if (d > 0 && d < desiredSeparation) {
+
+                //lav en vektor fra den anden fisk til denne fisk
+                let difference = p5.Vector.sub(this.position, boids[i].position);
+                difference.normalize();
+
+                //jo tættere den anden fisk er, jo stærkere skal denne seperere
+                difference.div(d);
+                steer.add(difference);
+                count++;
+            }
+        }
+
+        
+    }
+
 
 
 } 
 
+//------------------------------container class for all fishes----------------------
 class Fishes {
     
 
