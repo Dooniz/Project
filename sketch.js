@@ -35,6 +35,10 @@ function draw() {
     //tegner alle fiskekuttere
     for (let i = 0; i < boats.length; i++) {
         boats[i].draw();
+        boats[i].move();
+        if (boats[i].x > width + 20) {
+            boats[i].x = -20;
+        }
     }
 }
 
@@ -289,6 +293,11 @@ class FishingBoat {
 
         //counter for hvor mange fisk båden har fanget
         this.caughtFish = 0;
+    }
+
+    // bådene bevæger sig bare langs x aksen for nu
+    move() {
+        this.x = this.x + 4;
     }
 
     catchFish(fishArray) {
