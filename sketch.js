@@ -190,7 +190,7 @@ class Fish {
 
     //tjækker for fisk tæt på og bevæger sig væk
     seperate(boids) {
-        let desiredSeparation = 5;
+        let desiredSeparation = 25;
         let total = createVector(0, 0);
         let count = 0;
 
