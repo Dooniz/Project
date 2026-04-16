@@ -3,8 +3,6 @@
 Dette er min implementering af boids indtil videre.
 Har lavet allignment og cohesion. 
 
-Arbejder på seperation.
-
 ## HTML Preview
 
 For at se programmet køre, her:
