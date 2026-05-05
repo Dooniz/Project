@@ -86,12 +86,12 @@ class Fish {
     school(boids) { 
         //alligment
         let allignment = this.allign(boids);
-        allignment.mult(0.7); //justerer styrken af allignment kraften
+        allignment.mult(1); //justerer styrken af allignment kraften
         this.acceleration.add(allignment);
 
         //cohesion
         let cohesion = this.cohere(boids);
-        cohesion.mult(0.1); //justerer styrken af cohesion kraften
+        cohesion.mult(1); //justerer styrken af cohesion kraften
         this.acceleration.add(cohesion);
 
         let seperation = this.seperate(boids);
@@ -172,7 +172,7 @@ class Fish {
 
     //tjækker for fisk tæt på og bevæger sig væk
     seperate(boids) {
-        let desiredSeparation = 5;
+        let desiredSeparation = 40;
         let total = createVector(0, 0);
         let count = 0;
 
